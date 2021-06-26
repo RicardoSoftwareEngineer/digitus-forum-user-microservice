@@ -26,7 +26,7 @@ public class UserController {
         return "hi dad";
     }
 
-    @RequestMapping(value = "/user/retrieve/by/emailAndPassword")
+    @RequestMapping(value = "/user/v1/retrieve/byEmailAndPassword")
     public Object retrieve(@RequestHeader(defaultValue = "en_us") String locale,
                            @RequestBody UserVO user) {
 
