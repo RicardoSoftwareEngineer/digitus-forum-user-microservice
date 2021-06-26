@@ -35,27 +35,8 @@ public class UserService {
     UserRepository userRepository;
 
     public User findByEmailAndPassword(UserVO user, String locale) {
-
-    	
-//    	String endpoint = Cities.I18;
-//    	int timeout = Timeouts.ideal;
-//    	InternationalizationVO i18 = new InternationalizationVO(locale, M.LOGIN_MISSING_LOGIN);
-//    	MultiValueMap<String, String> headers = Headers.DEFAULT("en_us");
-//
-//    	
-//    	RestTemplate restTemplate = new RestTemplate();
-//        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(timeout);
-//        //final HttpEntity<Object> entity = new HttpEntity<>(i18, headers);
-//        HttpEntity<Object> entity = new HttpEntity<>(i18);
-//        ResponseEntity<? extends InternationalizationVO>  resp = restTemplate.exchange(endpoint, HttpMethod.POST, entity, i18.getClass());
-//        
-//        i18 =  resp.getBody();
-        
-    	
-    	if (1 == 1) throw new ResponseStatusException(HttpStatus.valueOf(403), "Internationalization service is down, sorry for the inconvenience - messag");
-    	
         if (StringUtils.isBlank(user.getEmail()))
-            throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_LOGIN);
+            throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_EMAIL);
         if (StringUtils.isBlank(user.getPassword()))
             throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_PASSWORD);
 
