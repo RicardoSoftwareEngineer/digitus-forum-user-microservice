@@ -23,6 +23,7 @@ public class User {
 	}
 
 	public User(UserVO user) {
+		this.userId = user.getUserId();
 		this.name = user.getName();
 		this.email = user.getEmail();
 		this.password = user.getPassword();

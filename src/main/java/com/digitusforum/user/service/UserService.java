@@ -44,7 +44,7 @@ public class UserService {
 		return user.get();
 	}
 
-	public User findByEmailAndPassword(UserVO user, String locale) {
+	public User retrieveByEmailAndPassword(UserVO user, String locale) {
 		if (StringUtils.isBlank(user.getEmail()))
 			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_EMAIL);
 		if (StringUtils.isBlank(user.getPassword()))
@@ -58,6 +58,35 @@ public class UserService {
 		return userFromDB.get();
 	}
 	
+	public UserVO update(UserVO user, String locale, int id) {
+		if (StringUtils.isBlank(user.getEmail()))
+			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_EMAIL);
+		if (StringUtils.isBlank(user.getPassword()))
+			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_PASSWORD);
+
+		Optional<User> userFromDB = userRepository.findById(id);
+		if (userFromDB.isEmpty())
+			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
+		
+		userFromDB = userRepository.findByEmailAndUserIdNotAndDeletedIsFalse(user.getEmail(), id);
+		if (userFromDB.isPresent())
+			throw ThrowService.doIt(locale, 403, M.USER_EMAIL_ALREADY_IN_USE);
+		
+		user.setUserId(id);
+		userRepository.save(new User(user));
+
+		return user;
+	}
+	
+	public void delete(String locale, int id) {
+		Optional<User> userFromDB = userRepository.findById(id);
+		if (userFromDB.isEmpty())
+			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
+		
+		User user = userFromDB.get();
+		user.setDeleted(true);
+		userRepository.save(user);
+	}
 	
 
 }

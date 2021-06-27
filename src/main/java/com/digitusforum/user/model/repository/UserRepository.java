@@ -10,7 +10,8 @@ import java.util.Optional;
 public interface UserRepository extends CrudRepository<User, Integer> {
     Optional<User> findByEmailAndPasswordAndDeletedIsFalse(String email, String password);
     Optional<User> findByEmailAndDeletedIsFalse(String email);
-    Optional<User> findByUserIdAndDeletedIsFalse(String userId);
+    Optional<User> findByEmailAndUserIdNotAndDeletedIsFalse(String email, int id);
+    Optional<User> findByUserIdAndDeletedIsFalse(int userId);
     List<User> findByDeletedIsFalse();
     void deleteByUserId(int userId);
 }
