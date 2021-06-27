@@ -48,8 +48,7 @@ public class UserController {
 	@RequestMapping(value = "/user/v1/{id}/delete")
 	public Object delete(@RequestHeader(defaultValue = "en_us") String locale,
 			@PathVariable Optional<Integer> id) {
-		userService.delete(locale, id.get());
-		return "user " + id + " deleted";
+		return userService.delete(locale, id.get());
 	}
 
 }

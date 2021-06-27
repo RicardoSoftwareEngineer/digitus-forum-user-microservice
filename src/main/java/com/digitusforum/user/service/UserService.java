@@ -74,11 +74,10 @@ public class UserService {
 		
 		user.setUserId(id);
 		userRepository.save(new User(user));
-
 		return user;
 	}
 	
-	public void delete(String locale, int id) {
+	public User delete(String locale, int id) {
 		Optional<User> userFromDB = userRepository.findById(id);
 		if (userFromDB.isEmpty())
 			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
@@ -86,6 +85,8 @@ public class UserService {
 		User user = userFromDB.get();
 		user.setDeleted(true);
 		userRepository.save(user);
+		user.setPassword("");
+		return user;
 	}
 	
 
