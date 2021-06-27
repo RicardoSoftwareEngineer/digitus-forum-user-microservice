@@ -27,8 +27,9 @@ public class UserController {
     }
     
     @RequestMapping(value = "/user/v1/{id}/retrieve")
-    public Object retrieveById(@PathVariable Optional<Integer> id) {
-        return userService.retrieveById(null, id.get());
+    public Object retrieveById(@RequestHeader(defaultValue = "en_us") String local, @PathVariable Optional<Integer> id) {
+    	
+        return userService.retrieveById(local, id.get());
     }
 
     @RequestMapping(value = "/user/v1/retrieve/byEmailAndPassword")
