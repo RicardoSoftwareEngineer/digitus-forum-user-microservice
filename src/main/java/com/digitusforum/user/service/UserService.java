@@ -37,6 +37,12 @@ public class UserService {
 	public List<User> retrieve(String locale){
 		return userRepository.findByDeletedIsFalse();
 	}
+	
+	public User retrieveById(String locale, int id) {
+		Optional<User> user = userRepository.findById(id);
+		if(user.isEmpty()) throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
+		return user.get();
+	}
 
 	public User findByEmailAndPassword(UserVO user, String locale) {
 		if (StringUtils.isBlank(user.getEmail()))

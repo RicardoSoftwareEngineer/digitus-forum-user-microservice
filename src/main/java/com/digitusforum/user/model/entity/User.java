@@ -12,8 +12,8 @@ import java.time.ZonedDateTime;
 @Entity
 public class User {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private String userId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int userId;
 	private String name;
 	private String email;
 	private String password;
@@ -29,11 +29,11 @@ public class User {
 		this.deleted = user.isDeleted();
 	}
 
-	public String getUserId() {
+	public int getUserId() {
 		return userId;
 	}
 
-	public void setUserId(String userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 
