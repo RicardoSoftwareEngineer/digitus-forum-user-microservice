@@ -35,10 +35,8 @@ public class UserService {
     UserRepository userRepository;
 
     public User findByEmailAndPassword(UserVO user, String locale) {
-        if (StringUtils.isBlank(user.getEmail()))
-            throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_EMAIL);
-        if (StringUtils.isBlank(user.getPassword()))
-            throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_PASSWORD);
+        if (StringUtils.isBlank(user.getEmail())) throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_EMAIL);
+        if (StringUtils.isBlank(user.getPassword())) throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_PASSWORD);
 
         Optional<User> userFromDB = userRepository.
                 findByEmailAndPasswordAndDeletedIsFalse(user.getEmail(), user.getPassword());
