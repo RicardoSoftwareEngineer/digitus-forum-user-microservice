@@ -15,14 +15,19 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @RequestMapping(value = "/user/create")
-    public Object create() {
-
-        return "hi daddy";
+    @RequestMapping(value = "/user/v1/create")
+    public Object create(@RequestHeader(defaultValue = "en_us") String locale,
+            @RequestBody UserVO user) {
+        return userService.create(user, locale);
     }
 
-    @RequestMapping(value = "/user/retrieve")
-    public Object retrieve(@PathVariable Optional<String> id) {
+    @RequestMapping(value = "/user/v1/retrieve")
+    public Object retrieve(@RequestHeader(defaultValue = "en_us") String locale) {
+        return userService.retrieve(locale);
+    }
+    
+    @RequestMapping(value = "/user/retrieve/byId")
+    public Object retrieveById(@PathVariable Optional<String> id) {
         return "hi dad";
     }
 
