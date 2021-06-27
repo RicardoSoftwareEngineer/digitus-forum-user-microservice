@@ -1,5 +1,6 @@
 package com.digitusforum.user.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,25 @@ import vo.UserVO;
 public class UserService {
 	@Autowired
 	UserRepository userRepository;
+	
+	public UserVO create(UserVO user, String locale) {
+		if (StringUtils.isBlank(user.getEmail()))
+			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_EMAIL);
+		if (StringUtils.isBlank(user.getPassword()))
+			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_PASSWORD);
+
+		Optional<User> userFromDB = userRepository.findByEmailAndDeletedIsFalse(user.getEmail());
+		if (userFromDB.isPresent())
+			throw ThrowService.doIt(locale, 403, M.USER_EMAIL_ALREADY_IN_USE);
+		
+		userRepository.save(new User(user));
+
+		return user;
+	}
+	
+	public List<User> retrieve(String locale){
+		return userRepository.findByDeletedIsFalse();
+	}
 
 	public User findByEmailAndPassword(UserVO user, String locale) {
 		if (StringUtils.isBlank(user.getEmail()))
@@ -31,5 +51,7 @@ public class UserService {
 
 		return userFromDB.get();
 	}
+	
+	
 
 }
