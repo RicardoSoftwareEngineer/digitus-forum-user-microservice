@@ -12,44 +12,43 @@ import java.util.Optional;
 
 @RestController
 public class UserController {
-    @Autowired
-    UserService userService;
+	@Autowired
+	UserService userService;
 
-    @RequestMapping(value = "/user/create")
-    public Object create() {
+	@RequestMapping(value = "/user/v1/create")
+	public Object create(@RequestHeader(defaultValue = "en_us") String locale, @RequestBody UserVO user) {
+		return userService.create(user, locale);
+	}
 
-        return "hi daddy";
-    }
+	@RequestMapping(value = "/user/v1/retrieve")
+	public Object retrieve(@RequestHeader(defaultValue = "en_us") String locale) {
+		return userService.retrieve(locale);
+	}
 
-    @RequestMapping(value = "/user/retrieve")
-    public Object retrieve(@PathVariable Optional<String> id) {
-        return "hi dad";
-    }
+	@RequestMapping(value = "/user/v1/{id}/retrieve")
+	public Object retrieveById(@RequestHeader(defaultValue = "en_us") String locale,
+			@PathVariable Optional<Integer> id) {
 
-    @RequestMapping(value = "/user/v1/retrieve/byEmailAndPassword")
-    public Object retrieve(@RequestHeader(defaultValue = "en_us") String locale,
-                           @RequestBody UserVO user) {
+		return userService.retrieveById(locale, id.get());
+	}
 
-        return userService.findByEmailAndPassword(user, locale);
-    }
+	@RequestMapping(value = "/user/v1/retrieve/byEmailAndPassword")
+	public Object retrieve(@RequestHeader(defaultValue = "en_us") String locale, @RequestBody UserVO user) {
 
-    @RequestMapping(value = "/user/{id}/retrieve")
-    public Object retrieve() {
-        return "hi dad";
-    }
+		return userService.retrieveByEmailAndPassword(user, locale);
+	}
+	
+	@RequestMapping(value = "/user/v1/{id}/update")
+	public Object update(@RequestHeader(defaultValue = "en_us") String locale,
+			@PathVariable Optional<Integer> id, @RequestBody UserVO user) {
 
-    @RequestMapping(value = "/user/{id}/update")
-    public Object update() {
-        return "hi dad";
-    }
+		return userService.update(user, locale, id.get());
+	}
 
-    @RequestMapping(value = "/user/{id}/delete")
-    public Object delete() {
-        return "hi dad";
-    }
+	@RequestMapping(value = "/user/v1/{id}/delete")
+	public Object delete(@RequestHeader(defaultValue = "en_us") String locale,
+			@PathVariable Optional<Integer> id) {
+		return userService.delete(locale, id.get());
+	}
 
-    @RequestMapping(value = "/user/{id}/validate")
-    public Object validate() {
-        return "hi dad";
-    }
 }

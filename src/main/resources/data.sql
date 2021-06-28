@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS user (
 );
 
 INSERT INTO user SELECT 1, 'ricardo', 'ricardo@gmail.com', 'pass word', false FROM DUAL WHERE NOT EXISTS (SELECT * FROM user WHERE user_id = 1);
-INSERT INTO user SELECT 2, 'charles', 'charles@gmail.com', 'kotlin', true FROM DUAL WHERE NOT EXISTS (SELECT * FROM user WHERE user_id = 1);
+INSERT INTO user SELECT 2, 'charles', 'charles@gmail.com', 'kotlin', true FROM DUAL WHERE NOT EXISTS (SELECT * FROM user WHERE user_id = 2);
 
 
 
