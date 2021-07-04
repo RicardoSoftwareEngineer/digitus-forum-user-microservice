@@ -1,5 +1,6 @@
 package com.digitusforum.user.endpoint;
 
+import com.digitusforum.user.model.repository.UserRepository;
 import com.digitusforum.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class UserController {
 	@Autowired
 	UserService userService;
+	
 
 	@RequestMapping(value = "/user/v1/create")
 	public Object create(@RequestHeader(defaultValue = "en_us") String locale, @RequestBody UserVO user) {

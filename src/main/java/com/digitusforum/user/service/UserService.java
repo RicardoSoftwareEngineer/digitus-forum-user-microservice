@@ -16,6 +16,7 @@ import vo.UserVO;
 
 @Service
 public class UserService {
+	
 	@Autowired
 	UserRepository userRepository;
 	
