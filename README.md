@@ -8,16 +8,21 @@ Its intended to be used internaly by others microservices, not to be exposed on 
 ## Made with
 
 - java 11
-- spring boot 2.5
 - maven
-- sprint tool suite 4
+- spring boot 2.5
+- junit 5
 - h2 database engine
+- sprint tool suite 4
+
+## Tests
+
+- CRUD test accessing database
 
 ## Installation
 
 Import on your preferred IDE as a maven project and run it like any other spring boot project
 
-The database is built in so you dont need to worry
+The database is built in so you don´t need to worry
 
 ## Postman reqs
 
