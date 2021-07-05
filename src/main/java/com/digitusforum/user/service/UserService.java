@@ -20,19 +20,19 @@ public class UserService {
 	@Autowired
 	UserRepository userRepository;
 	
-	public UserVO create(UserVO user, String locale) {
-		if (StringUtils.isBlank(user.getEmail()))
+	public UserVO create(UserVO userVO, String locale) {
+		if (StringUtils.isBlank(userVO.getEmail()))
 			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_EMAIL);
-		if (StringUtils.isBlank(user.getPassword()))
+		if (StringUtils.isBlank(userVO.getPassword()))
 			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_PASSWORD);
 
-		Optional<User> userFromDB = userRepository.findByEmailAndDeletedIsFalse(user.getEmail());
+		Optional<User> userFromDB = userRepository.findByEmailAndDeletedIsFalse(userVO.getEmail());
 		if (userFromDB.isPresent())
 			throw ThrowService.doIt(locale, 403, M.USER_EMAIL_ALREADY_IN_USE);
 		
-		userRepository.save(new User(user));
-
-		return user;
+		User user = userRepository.save(new User(userVO));
+		userVO.setUserId(user.getUserId());
+		return userVO;
 	}
 	
 	public List<User> retrieve(String locale){
@@ -88,6 +88,14 @@ public class UserService {
 		userRepository.save(user);
 		user.setPassword("");
 		return user;
+	}
+	
+	public void deleteTest(String locale, int id) {
+		Optional<User> userFromDB = userRepository.findById(id);
+		if (userFromDB.isEmpty())
+			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
+		
+		userRepository.delete(userFromDB.get());
 	}
 	
 
