@@ -1,14 +1,17 @@
 package com.digitusforum.user.endpoint;
 
-import com.digitusforum.user.service.UserService;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.digitusforum.user.service.UserService;
 
 import vo.UserVO;
-
-import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -37,17 +40,16 @@ public class UserController {
 
 		return userService.retrieveByEmailAndPassword(user, locale);
 	}
-	
+
 	@RequestMapping(value = "/user/v1/{id}/update")
-	public Object update(@RequestHeader(defaultValue = "en_us") String locale,
-			@PathVariable Optional<Integer> id, @RequestBody UserVO user) {
+	public Object update(@RequestHeader(defaultValue = "en_us") String locale, @PathVariable Optional<Integer> id,
+			@RequestBody UserVO user) {
 
 		return userService.update(user, locale, id.get());
 	}
 
 	@RequestMapping(value = "/user/v1/{id}/delete")
-	public Object delete(@RequestHeader(defaultValue = "en_us") String locale,
-			@PathVariable Optional<Integer> id) {
+	public Object delete(@RequestHeader(defaultValue = "en_us") String locale, @PathVariable Optional<Integer> id) {
 		return userService.delete(locale, id.get());
 	}
 
