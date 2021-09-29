@@ -1,4 +1,4 @@
-package com.digitusforum.user.endpoint;
+package com.digitusforum.user;
 
 import java.util.Optional;
 
@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.digitusforum.user.service.UserService;
-
-import vo.UserVO;
+import user.UserVO;
 
 @RestController
 public class UserController {

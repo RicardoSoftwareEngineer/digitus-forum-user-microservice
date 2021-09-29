@@ -1,4 +1,4 @@
-package com.digitusforum.user.service;
+package com.digitusforum.user;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,12 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.digitusforum.user.model.entity.User;
-import com.digitusforum.user.model.repository.UserRepository;
-
-import model.M;
-import service.ThrowService;
-import vo.UserVO;
+import i18.M;
+import user.UserVO;
+import util.ThrowService;
 
 @Service
 public class UserService {
@@ -26,32 +23,32 @@ public class UserService {
 		if (StringUtils.isBlank(userVO.getPassword()))
 			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_PASSWORD);
 
-		Optional<User> userFromDB = userRepository.findByEmailAndDeletedIsFalse(userVO.getEmail());
+		Optional<UserEntity> userFromDB = userRepository.findByEmailAndDeletedIsFalse(userVO.getEmail());
 		if (userFromDB.isPresent())
 			throw ThrowService.doIt(locale, 403, M.USER_EMAIL_ALREADY_IN_USE);
 		
-		User user = userRepository.save(new User(userVO));
+		UserEntity user = userRepository.save(new UserEntity(userVO));
 		userVO.setUserId(user.getUserId());
 		return userVO;
 	}
 	
-	public List<User> retrieve(String locale){
+	public List<UserEntity> retrieve(String locale){
 		return userRepository.findByDeletedIsFalse();
 	}
 	
-	public User retrieveById(String locale, int id) {
-		Optional<User> user = userRepository.findById(id);
+	public UserEntity retrieveById(String locale, int id) {
+		Optional<UserEntity> user = userRepository.findById(id);
 		if(user.isEmpty()) throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
 		return user.get();
 	}
 
-	public User retrieveByEmailAndPassword(UserVO user, String locale) {
+	public UserEntity retrieveByEmailAndPassword(UserVO user, String locale) {
 		if (StringUtils.isBlank(user.getEmail()))
 			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_EMAIL);
 		if (StringUtils.isBlank(user.getPassword()))
 			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_PASSWORD);
 
-		Optional<User> userFromDB = userRepository.findByEmailAndPasswordAndDeletedIsFalse(user.getEmail(),
+		Optional<UserEntity> userFromDB = userRepository.findByEmailAndPasswordAndDeletedIsFalse(user.getEmail(),
 				user.getPassword());
 		if (!userFromDB.isPresent())
 			throw ThrowService.doIt(locale, 404, M.LOGIN_WRONG_LOGIN_OR_PASSWORD);
@@ -65,7 +62,7 @@ public class UserService {
 		if (StringUtils.isBlank(user.getPassword()))
 			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_PASSWORD);
 
-		Optional<User> userFromDB = userRepository.findById(id);
+		Optional<UserEntity> userFromDB = userRepository.findById(id);
 		if (userFromDB.isEmpty())
 			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
 		
@@ -74,16 +71,16 @@ public class UserService {
 			throw ThrowService.doIt(locale, 403, M.USER_EMAIL_ALREADY_IN_USE);
 		
 		user.setUserId(id);
-		userRepository.save(new User(user));
+		userRepository.save(new UserEntity(user));
 		return user;
 	}
 	
-	public User delete(String locale, int id) {
-		Optional<User> userFromDB = userRepository.findById(id);
+	public UserEntity delete(String locale, int id) {
+		Optional<UserEntity> userFromDB = userRepository.findById(id);
 		if (userFromDB.isEmpty())
 			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
 		
-		User user = userFromDB.get();
+		UserEntity user = userFromDB.get();
 		user.setDeleted(true);
 		userRepository.save(user);
 		user.setPassword("");
@@ -91,7 +88,7 @@ public class UserService {
 	}
 	
 	public void deleteTest(String locale, int id) {
-		Optional<User> userFromDB = userRepository.findById(id);
+		Optional<UserEntity> userFromDB = userRepository.findById(id);
 		if (userFromDB.isEmpty())
 			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
 		

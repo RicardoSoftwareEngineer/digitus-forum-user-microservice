@@ -1,4 +1,4 @@
-package com.digitusforum.user.endpoint;
+package com.digitusforum.user.model.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

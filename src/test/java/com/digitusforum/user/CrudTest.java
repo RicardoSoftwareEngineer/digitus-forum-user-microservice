@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.digitusforum.user.model.entity.User;
-import com.digitusforum.user.service.UserService;
-
-import vo.UserVO;
+import user.UserVO;
 
 @SpringBootTest
 public class CrudTest {
@@ -32,7 +29,7 @@ public class CrudTest {
 		String userEmail = UUID.randomUUID().toString();
 		UserVO userVO = new UserVO(userEmail, "password");
 		final UserVO USER_VO = userVO;
-		User user = null;
+		UserEntity user = null;
 		ResponseStatusException thrown = null;
 
 		thrown = assertThrows(ResponseStatusException.class, () -> {
@@ -42,7 +39,7 @@ public class CrudTest {
 		assertThat(userVO.getUserId()).isZero();
 		userVO = userService.create(userVO, "en_us");
 		assertThat(userVO.getUserId()).isNotZero();
-		List<User> users = userService.retrieve("en_us");
+		List<UserEntity> users = userService.retrieve("en_us");
 		assertThat(users.size()).isGreaterThan(0);
 		user = null;
 		user = userService.retrieveById("en_us", userVO.getUserId());

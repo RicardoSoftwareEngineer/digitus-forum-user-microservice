@@ -1,16 +1,18 @@
-package com.digitusforum.user.model.entity;
+package com.digitusforum.user;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-import vo.UserVO;
+import user.UserVO;
 
 import java.time.ZonedDateTime;
 
 @Entity
-public class User {
+@Table(name = "User")
+public class UserEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userId;
@@ -19,10 +21,10 @@ public class User {
 	private String password;
 	private boolean deleted;
 
-	public User() {
+	public UserEntity() {
 	}
 
-	public User(UserVO user) {
+	public UserEntity(UserVO user) {
 		this.userId = user.getUserId();
 		this.name = user.getName();
 		this.email = user.getEmail();
