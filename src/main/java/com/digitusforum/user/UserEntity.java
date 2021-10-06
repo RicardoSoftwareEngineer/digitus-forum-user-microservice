@@ -6,10 +6,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import user.UserVO;
-
-import java.time.ZonedDateTime;
-
 @Entity
 @Table(name = "User")
 public class UserEntity {
@@ -26,9 +22,9 @@ public class UserEntity {
 
 	public UserEntity(UserVO user) {
 		this.userId = user.getUserId();
-		this.name = user.getName();
-		this.email = user.getEmail();
-		this.password = user.getPassword();
+		this.name = user.getUserName();
+		this.email = user.getUserEmail();
+		this.password = user.getUserPassword();
 		this.deleted = user.isDeleted();
 	}
 
