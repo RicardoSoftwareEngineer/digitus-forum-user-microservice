@@ -18,72 +18,72 @@ public class UserService {
 	@Autowired
 	UserRepository userRepository;
 
-	public UserVO create(UserVO user2) {
-		if (StringUtils.isBlank(user2.getUserEmail()))
+	public UserVO create(UserVO userVO) {
+		if (StringUtils.isBlank(userVO.getEmail()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.LOGIN_MISSING_EMAIL);
-		if (StringUtils.isBlank(user2.getUserPassword()))
+		if (StringUtils.isBlank(userVO.getPassword()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.LOGIN_MISSING_PASSWORD);
 
-		Optional<UserEntity> userFromDB = userRepository.findByEmailAndDeletedIsFalse(user2.getUserEmail());
+		Optional<UserEntity> userFromDB = userRepository.findByEmailAndDeletedIsFalse(userVO.getEmail());
 		if (userFromDB.isPresent())
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_EMAIL_ALREADY_IN_USE);
 
-		UserEntity user = userRepository.save(new UserEntity(user2));
-		user2.setUserId(user.getUserId());
-		return user2;
+		UserEntity user = userRepository.save(new UserEntity(userVO));
+		userVO.setId(user.getId().toString());
+		return userVO;
 	}
 
-	public List<UserEntity> retrieve(String locale) {
+	public List<UserEntity> retrieve() {
 		return userRepository.findByDeletedIsFalse();
 	}
 
-	public UserEntity retrieveById(String locale, int id) {
+	public UserEntity retrieveById(String id) {
 		Optional<UserEntity> user = userRepository.findById(id);
 		if (user.isEmpty())
-			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
+			throw ThrowService.doIt(404, M.USER_NOT_FOUND);
 		return user.get();
 	}
 
 	public UserVO retrieveByEmailAndPassword(UserVO userVO) {
-		if (StringUtils.isBlank(userVO.getUserEmail()))
+		if (StringUtils.isBlank(userVO.getEmail()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.LOGIN_MISSING_EMAIL);
-		if (StringUtils.isBlank(userVO.getUserPassword()))
+		if (StringUtils.isBlank(userVO.getPassword()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.LOGIN_MISSING_PASSWORD);
 
-		Optional<UserEntity> userFromDB = userRepository.findByEmailAndPasswordAndDeletedIsFalse(userVO.getUserEmail(),
-				userVO.getUserPassword());
+		Optional<UserEntity> userFromDB = userRepository.findByEmailAndPasswordAndDeletedIsFalse(userVO.getEmail(),
+				userVO.getPassword());
 		if (!userFromDB.isPresent())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.LOGIN_WRONG_LOGIN_OR_PASSWORD);
 
-		userVO.setUserId(userFromDB.get().getUserId());
-		userVO.setUserPassword(null);
+		userVO.setId(userFromDB.get().getId().toString());
+		userVO.setPassword(null);
 
 		return userVO;
 	}
 
-	public UserVO update(UserVO user, String locale, int id) {
-		if (StringUtils.isBlank(user.getUserEmail()))
-			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_EMAIL);
-		if (StringUtils.isBlank(user.getUserPassword()))
-			throw ThrowService.doIt(locale, 403, M.LOGIN_MISSING_PASSWORD);
+	public UserVO update(UserVO user, String id) {
+		if (StringUtils.isBlank(user.getEmail()))
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.LOGIN_MISSING_EMAIL);
+		if (StringUtils.isBlank(user.getPassword()))
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.LOGIN_MISSING_PASSWORD);
 
 		Optional<UserEntity> userFromDB = userRepository.findById(id);
 		if (userFromDB.isEmpty())
-			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.USER_NOT_FOUND);
 
-		userFromDB = userRepository.findByEmailAndUserIdNotAndDeletedIsFalse(user.getUserEmail(), id);
+		userFromDB = userRepository.findByEmailAndIdNotAndDeletedIsFalse(user.getEmail(), id);
 		if (userFromDB.isPresent())
-			throw ThrowService.doIt(locale, 403, M.USER_EMAIL_ALREADY_IN_USE);
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_EMAIL_ALREADY_IN_USE);
 
-		user.setUserId(id);
+		user.setId(id);
 		userRepository.save(new UserEntity(user));
 		return user;
 	}
 
-	public UserEntity delete(String locale, int id) {
+	public UserEntity delete(String id) {
 		Optional<UserEntity> userFromDB = userRepository.findById(id);
 		if (userFromDB.isEmpty())
-			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.USER_NOT_FOUND);
 
 		UserEntity user = userFromDB.get();
 		user.setDeleted(true);
@@ -92,7 +92,7 @@ public class UserService {
 		return user;
 	}
 
-	public void deleteTest(String locale, int id) {
+	public void deleteTest(String locale, String id) {
 		Optional<UserEntity> userFromDB = userRepository.findById(id);
 		if (userFromDB.isEmpty())
 			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);

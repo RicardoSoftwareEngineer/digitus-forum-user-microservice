@@ -2,16 +2,18 @@ package com.digitusforum.user;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "User")
 public class UserEntity {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
+	@GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+	private String id;
 	private String name;
 	private String email;
 	private String password;
@@ -21,19 +23,19 @@ public class UserEntity {
 	}
 
 	public UserEntity(UserVO user) {
-		this.userId = user.getUserId();
+		this.id = user.getId();
 		this.name = user.getUserName();
-		this.email = user.getUserEmail();
-		this.password = user.getUserPassword();
+		this.email = user.getEmail();
+		this.password = user.getPassword();
 		this.deleted = user.isDeleted();
 	}
 
-	public int getUserId() {
-		return userId;
+	public String getId() {
+		return id;
 	}
 
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {

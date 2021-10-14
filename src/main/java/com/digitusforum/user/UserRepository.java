@@ -6,11 +6,11 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends CrudRepository<UserEntity, Integer> {
+public interface UserRepository extends CrudRepository<UserEntity, String> {
     Optional<UserEntity> findByEmailAndPasswordAndDeletedIsFalse(String email, String password);
     Optional<UserEntity> findByEmailAndDeletedIsFalse(String email);
-    Optional<UserEntity> findByEmailAndUserIdNotAndDeletedIsFalse(String email, int id);
-    Optional<UserEntity> findByUserIdAndDeletedIsFalse(int userId);
+    Optional<UserEntity> findByEmailAndIdNotAndDeletedIsFalse(String email, String id);
+    Optional<UserEntity> findByIdAndDeletedIsFalse(String userId);
     List<UserEntity> findByDeletedIsFalse();
-    void deleteByUserId(int userId);
+    void deleteById(String userId);
 }

@@ -1,7 +1,5 @@
 package com.digitusforum.user;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,13 +19,12 @@ public class UserController {
 
 	@RequestMapping(value = "/user/v1/retrieve")
 	public Object retrieve(@RequestHeader(defaultValue = "en_us") String locale) {
-		return userService.retrieve(locale);
+		return userService.retrieve();
 	}
 
 	@RequestMapping(value = "/user/v1/{id}/retrieve")
-	public Object retrieveById(@RequestHeader(defaultValue = "en_us") String locale,
-			@PathVariable Optional<Integer> id) {
-		return userService.retrieveById(locale, id.get());
+	public Object retrieveById(@PathVariable String id) {
+		return userService.retrieveById(id);
 	}
 
 	@RequestMapping(value = "/user/v1/retrieve/byEmailAndPassword")
@@ -36,14 +33,12 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/user/v1/{id}/update")
-	public Object update(@RequestHeader(defaultValue = "en_us") String locale, @PathVariable Optional<Integer> id,
-			@RequestBody UserVO user) {
-
-		return userService.update(user, locale, id.get());
+	public Object update(@PathVariable String id, @RequestBody UserVO user) {
+		return userService.update(user, id);
 	}
 
 	@RequestMapping(value = "/user/v1/{id}/delete")
-	public Object delete(@RequestHeader(defaultValue = "en_us") String locale, @PathVariable Optional<Integer> id) {
-		return userService.delete(locale, id.get());
+	public Object delete(@PathVariable String id) {
+		return userService.delete(id);
 	}
 }
