@@ -9,8 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import i18.M;
-import util.ThrowService;
+import com.digitusforum.user.model.util.M;
 
 @Service
 public class UserService {
@@ -40,7 +39,7 @@ public class UserService {
 	public UserEntity retrieveById(String id) {
 		Optional<UserEntity> user = userRepository.findById(id);
 		if (user.isEmpty())
-			throw ThrowService.doIt(404, M.USER_NOT_FOUND);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.USER_NOT_FOUND);
 		return user.get();
 	}
 
@@ -95,7 +94,7 @@ public class UserService {
 	public void deleteTest(String locale, String id) {
 		Optional<UserEntity> userFromDB = userRepository.findById(id);
 		if (userFromDB.isEmpty())
-			throw ThrowService.doIt(locale, 404, M.USER_NOT_FOUND);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.USER_NOT_FOUND);
 
 		userRepository.delete(userFromDB.get());
 	}
