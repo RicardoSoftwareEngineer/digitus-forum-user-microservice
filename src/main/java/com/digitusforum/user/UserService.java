@@ -6,16 +6,21 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.digitusforum.user.model.util.M;
+import com.digitusforum.chat.ChatMessageVO;
+import com.digitusforum.user.util.M;
+
 
 @Service
 public class UserService {
 
 	@Autowired
 	UserRepository userRepository;
+	
 
 	public UserVO create(UserVO userVO) {
 		if (StringUtils.isBlank(userVO.getEmail()))
@@ -49,12 +54,17 @@ public class UserService {
 		if (StringUtils.isBlank(userVO.getPassword()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.LOGIN_MISSING_PASSWORD);
 
-		Optional<UserEntity> userFromDB = userRepository.findByEmailAndPasswordAndDeletedIsFalse(userVO.getEmail(),
-				userVO.getPassword());
-		if (!userFromDB.isPresent())
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.LOGIN_WRONG_LOGIN_OR_PASSWORD);
+        //String decryptedPassword = Encryptors.text("password goes here", "8618d57d94674a78").decrypt(userVO.getPassword());
+		
+		UserEntity userFromDB = userRepository.findByEmailAndDeletedIsFalse(userVO.getEmail())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, M.USER_NOT_FOUND));
+		
+		String decryptedPasswordFromDB = Encryptors.text("password goes here", "8618d57d94674a78").decrypt(userFromDB.getPassword());
+		
+		if(!userVO.getPassword().equals(decryptedPasswordFromDB))
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.LOGIN_WRONG_LOGIN_OR_PASSWORD);
 
-		userVO.setId(userFromDB.get().getId().toString());
+		userVO.setId(userFromDB.getId().toString());
 		userVO.setPassword(null);
 
 		return userVO;

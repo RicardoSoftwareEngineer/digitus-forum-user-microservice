@@ -7,17 +7,22 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.digitusforum.chat.ChatMessageVO;
+
 @RestController
 public class UserController {
 	@Autowired
 	UserService userService;
 
+	
 	@RequestMapping(value = "/user/v1/create")
 	public Object create(@RequestBody UserVO user) {
-		return userService.create(user);
+		
+		
+		return "";
 	}
 
-	@RequestMapping(value = "/user/v1/retrieve")
+	//@RequestMapping(value = "/user/v1/retrieve")
 	public Object retrieve(@RequestHeader(defaultValue = "en_us") String locale) {
 		return userService.retrieve();
 	}
@@ -25,6 +30,13 @@ public class UserController {
 	@RequestMapping(value = "/user/v1/{id}/retrieve")
 	public Object retrieveById(@PathVariable String id) {
 		return userService.retrieveById(id);
+	}
+	
+	
+	
+	@RequestMapping(value = "/user/v1/create/validateEmail")
+	public UserVO validateEmail(@RequestBody UserVO user) {
+		return userService.retrieveByEmailAndPassword(user);
 	}
 
 	@RequestMapping(value = "/user/v1/retrieve/byEmailAndPassword")

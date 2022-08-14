@@ -1,4 +1,4 @@
-package com.digitusforum.user.model.util;
+package com.digitusforum;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
