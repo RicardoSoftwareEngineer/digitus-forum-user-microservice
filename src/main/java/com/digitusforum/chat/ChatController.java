@@ -15,17 +15,17 @@ public class ChatController {
 	ChatService userService;
 
 	@RequestMapping(value = "/user/v1/chat")
-	public List<ChatMessageEntity> chat(@RequestBody ChatMessageVO user) {
+	public ConversationVO chat(@RequestBody ChatMessageVO user) {
 		return userService.chat(user);
 	}
 	
 	@RequestMapping(value = "/user/v1/conversations")
-	public List<ChatSubjectEntity> conversations(@RequestBody ChatMessageVO chatMessageVO) {
+	public List<ConversationVO> conversations(@RequestBody ChatMessageVO chatMessageVO) {
 		return userService.getConversations(chatMessageVO);
 	}
 	
 	@RequestMapping(value = "/user/v1/conversation")
-	public List<ChatMessageEntity> conversation(@RequestBody ChatMessageVO chatMessageVO) {
+	public ConversationVO conversation(@RequestBody ChatMessageVO chatMessageVO) {
 		return userService.getConversation(chatMessageVO);
 	}
 	

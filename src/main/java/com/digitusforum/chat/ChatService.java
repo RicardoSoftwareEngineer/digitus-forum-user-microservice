@@ -39,6 +39,7 @@ public class ChatService {
 		if(StringUtils.isBlank(chatMessageVO.getChatSubjectId())) {
 			if(StringUtils.isBlank(chatMessageVO.getName()))
 				chatMessageVO.setName("---");
+		if()
 			ChatSubjectEntity subject = new ModelMapper().map(chatMessageVO, ChatSubjectEntity.class);
 			subject.setLastUpdated(ZonedDateTime.now());
 			subject = chatSubjectRepository.save(subject);
@@ -69,10 +70,13 @@ public class ChatService {
 		ChatSubjectEntity subject = chatSubjectRepository.findByChatSubjectIdAndDeletedIsFalse(subjectId);
 		if(subject == null)
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.CHAT_SUBJECT_NOT_FOUND);
+		
 		List<ChatMessageEntity> chats = chatMessageRepository.findByChatSubjectIdOrderByPosition(subjectId);
+		List<ChatMessageVO> chatsVO = new ModelMapper().map(chats, List.class);
+		
 		ConversationVO conversation = new ConversationVO();
 		conversation.setSubjectId(subjectId);
-		conversation.setConversation(chats);
+		conversation.setConversation(chatsVO);
 		return conversation;
 	}
 	

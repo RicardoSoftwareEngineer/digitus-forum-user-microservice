@@ -5,9 +5,27 @@ import java.util.List;
 
 public class ConversationVO {
 	private String subjectId;
+	private String subjectName;
+	private String subjectStatus;
 	private List<ChatMessageVO> conversation = new ArrayList<>();
 
 	public ConversationVO() {
+	}
+
+	public String getSubjectStatus() {
+		return subjectStatus;
+	}
+
+	public void setSubjectStatus(String subjectStatus) {
+		this.subjectStatus = subjectStatus;
+	}
+
+	public String getSubjectName() {
+		return subjectName;
+	}
+
+	public void setSubjectName(String subjectName) {
+		this.subjectName = subjectName;
 	}
 
 	public String getSubjectId() {
