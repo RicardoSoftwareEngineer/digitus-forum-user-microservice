@@ -65,8 +65,9 @@ public class UserService {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.LOGIN_WRONG_LOGIN_OR_PASSWORD);
 
 		userVO.setId(userFromDB.getId().toString());
+		userVO.setEmail(userFromDB.getEmail());
+		userVO.setUserType(userFromDB.getType());
 		userVO.setPassword(null);
-
 		return userVO;
 	}
 

@@ -17,6 +17,7 @@ public class UserEntity {
 	private String name;
 	private String email;
 	private String password;
+	private String type = UserType.CLIENT;
 	private boolean deleted;
 
 	public UserEntity() {
@@ -28,6 +29,14 @@ public class UserEntity {
 		this.email = user.getEmail();
 		this.password = user.getPassword();
 		this.deleted = user.isDeleted();
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getId() {

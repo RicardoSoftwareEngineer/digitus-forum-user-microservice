@@ -3,6 +3,7 @@ package com.digitusforum.user;
 public class UserVO {
 	private String id;
 	private String userName;
+	private String userType;
 	private String email;
 	private String password;
 	private String tokenType;
@@ -11,6 +12,14 @@ public class UserVO {
 	private boolean deleted;
 
 	public UserVO() {
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
 	public String getId() {

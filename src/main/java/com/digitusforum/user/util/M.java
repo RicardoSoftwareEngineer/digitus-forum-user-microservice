@@ -11,6 +11,7 @@ public class M {
     
     public static String CHAT_MISSING_USER_ID = "chat.missing.userId";
     public static String CHAT_MISSING_USER_EMAIL = "chat.missing.userEmail";
+    public static String CHAT_MISSING_USER_TYPE = "chat.missing.userType";
     public static String CHAT_MISSING_USER_NAME = "chat.missing.userName";
     public static String CHAT_MISSING_SUBJECT_ID = "chat.missing.subjectId";
     public static String CHAT_MISSING_MESSAGE = "chat.missing.message";

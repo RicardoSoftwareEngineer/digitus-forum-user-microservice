@@ -14,15 +14,33 @@ public class ChatMessageEntity {
 	@GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
 	private String chatMessageId;
+	private String chatSubjectId;
 	private String userId;
 	private String userName;
-	private String chatSubjectId;
+	private String userEmail;
+	private String userType; //UserType.java
 	private String message;
 	private String status;
 	private int position;
 	public ChatMessageEntity() {
 	}
 	
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
 	public String getUserName() {
 		return userName;
 	}

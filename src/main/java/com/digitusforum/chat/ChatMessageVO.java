@@ -5,13 +5,22 @@ public class ChatMessageVO {
 	private String chatSubjectName;
 	private String userId;
 	private String userName;
+	private String userType;
 	private String userEmail;
 	private String chatMessageId;
 	private String name;
 	private String message;
-	private String status;
+	private int position;
 
 	public ChatMessageVO() {
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
 	public String getUserEmail() {
@@ -78,13 +87,15 @@ public class ChatMessageVO {
 		this.message = message;
 	}
 
-	public String getStatus() {
-		return status;
+	public int getPosition() {
+		return position;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setPosition(int position) {
+		this.position = position;
 	}
+
+
 
 
 }

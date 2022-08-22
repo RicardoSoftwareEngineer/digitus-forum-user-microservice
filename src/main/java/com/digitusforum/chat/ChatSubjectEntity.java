@@ -18,7 +18,8 @@ public class ChatSubjectEntity {
 	private String chatSubjectId;
 	private String userId;
 	private String name;
-	private String status;
+	private String privateOrPublic = "public";
+	private String status = ChatState.NOT_ANSWERED;
 	private ZonedDateTime lastUpdated;
 	private boolean deleted;
 	public ChatSubjectEntity() {
@@ -63,12 +64,25 @@ public class ChatSubjectEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public String getPrivateOrPublic() {
+		return privateOrPublic;
+	}
+
+	public void setPrivateOrPublic(String privateOrPublic) {
+		this.privateOrPublic = privateOrPublic;
+	}
+
 	public String getStatus() {
 		return status;
 	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+
+	
 
 	
 }
