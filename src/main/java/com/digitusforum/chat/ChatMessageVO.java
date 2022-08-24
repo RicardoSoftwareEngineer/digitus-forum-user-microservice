@@ -10,6 +10,7 @@ public class ChatMessageVO {
 	private String chatMessageId;
 	private String name;
 	private String message;
+	private String alignment;
 	private int position;
 
 	public ChatMessageVO() {
