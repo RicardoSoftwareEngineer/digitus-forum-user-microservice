@@ -21,10 +21,19 @@ public class ChatMessageEntity {
 	private String userType; //UserType.java
 	private String message;
 	private String status;
+	private String alignment;
 	private int position;
 	public ChatMessageEntity() {
 	}
 	
+	public String getAlignment() {
+		return alignment;
+	}
+
+	public void setAlignment(String alignment) {
+		this.alignment = alignment;
+	}
+
 	public String getUserEmail() {
 		return userEmail;
 	}

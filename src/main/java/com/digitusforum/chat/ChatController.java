@@ -1,5 +1,6 @@
 package com.digitusforum.chat;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,12 @@ public class ChatController {
 	@RequestMapping(value = "/user/v1/conversation")
 	public ConversationVO conversation(@RequestBody ChatMessageVO chatMessageVO) {
 		return userService.getConversation(chatMessageVO);
+	}
+	
+	
+	@RequestMapping(value = "/user/v1/sup")
+	public ConversationVO sup(@RequestBody ChatMessageVO chatMessageVO) throws IOException {
+		return userService.sup(chatMessageVO);
 	}
 
 }

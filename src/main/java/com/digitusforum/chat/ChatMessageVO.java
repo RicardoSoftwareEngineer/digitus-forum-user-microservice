@@ -12,8 +12,34 @@ public class ChatMessageVO {
 	private String message;
 	private String alignment;
 	private int position;
+	private int from;
+	private int to;
 
 	public ChatMessageVO() {
+	}
+
+	public int getFrom() {
+		return from;
+	}
+
+	public void setFrom(int from) {
+		this.from = from;
+	}
+
+	public int getTo() {
+		return to;
+	}
+
+	public void setTo(int to) {
+		this.to = to;
+	}
+
+	public String getAlignment() {
+		return alignment;
+	}
+
+	public void setAlignment(String alignment) {
+		this.alignment = alignment;
 	}
 
 	public String getUserType() {

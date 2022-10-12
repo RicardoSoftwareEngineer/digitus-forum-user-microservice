@@ -9,9 +9,18 @@ public class UserVO {
 	private String tokenType;
 	private String grantType;
 	private String token;
+	private String type;
 	private boolean deleted;
 
 	public UserVO() {
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getUserType() {
