@@ -30,6 +30,7 @@ public class M {
     public static String USER_NOT_FOUND = "user.not_found";
     public static String USER_EMAIL_ALREADY_IN_USE = "user.email_already_in_use";
     public static String USER_MISSING_EMAIL = "user.missing.email";
+    public static String USER_MISSING_RECAPTCHA = "user.missing.recaptcha";
     public static String USER_MISSING_PASSWORD = "user.missing.password";
     public static String DIFERENT_PASSWORD = "user.diferent.password";
     public static String USER_MISSING_READABLE_NUMBER = "user.missing.readableNumber";

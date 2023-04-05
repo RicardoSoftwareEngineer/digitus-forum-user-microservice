@@ -3,6 +3,7 @@ package com.digitusforum.user.emailVerification;
 public class EmailVerificationVO {
 	private String emailVerificationId;
 	private String email;
+	private String recaptchaToken;
 	private String password;
 	private String retypePassword;
 	private String response;
@@ -68,4 +69,11 @@ public class EmailVerificationVO {
 		this.used = used;
 	}
 
+	public String getRecaptchaToken() {
+		return recaptchaToken;
+	}
+
+	public void setRecaptchaToken(String recaptchaToken) {
+		this.recaptchaToken = recaptchaToken;
+	}
 }
