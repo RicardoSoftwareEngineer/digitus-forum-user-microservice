@@ -19,10 +19,10 @@ public class EmailVerificationSender {
    
     
     // Replace smtp_username with your Amazon SES SMTP user name.
-    static final String SMTP_USERNAME = "AKIA6HLJTEJUR5634TYH";
+    static final String SMTP_USERNAME = System.getenv("AWS_SES_SMTP_USERNAME");
     
     // Replace smtp_password with your Amazon SES SMTP password.
-    static final String SMTP_PASSWORD = "BKiAtym7Lyg9+dbv0L1JvlOt3D6JSDDn4QWuR7XglVmf";
+    static final String SMTP_PASSWORD = System.getenv("AWS_SES_SMTP_PASSWORD");
     
     // The name of the Configuration Set to use for this message.
     // If you comment out or remove this variable, you will also need to
@@ -105,7 +105,10 @@ public class EmailVerificationSender {
        
             System.out.println("Sending...");
             
-            // Connect to Amazon SES using the SMTP username and password you specified above.
+            if (SMTP_USERNAME == null || SMTP_PASSWORD == null) {
+                System.out.println("SES SMTP env vars missing");
+                return;
+            }
             transport.connect(HOST, SMTP_USERNAME, SMTP_PASSWORD);
             //transport.connect(SMTP_USERNAME, SMTP_PASSWORD);
         	
