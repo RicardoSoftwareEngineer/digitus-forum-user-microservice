@@ -30,6 +30,11 @@ public class EmailVerificationEntity {
 		this.lastEmailSent = ZonedDateTime.now();
 	}
 
+	public void refreshReadableNumber(EmailVerificationRepository emailVerificationRepository) {
+		this.readableNumber = generateReadableNumber(this.email, emailVerificationRepository);
+		this.lastEmailSent = ZonedDateTime.now();
+	}
+
 	private int generateReadableNumber(String userId, EmailVerificationRepository emailVerificationRepository) {
 		int readableNumber = ThreadLocalRandom.current().nextInt(100000, 999999);
 		while (emailVerificationRepository.findByReadableNumber(readableNumber).isPresent())

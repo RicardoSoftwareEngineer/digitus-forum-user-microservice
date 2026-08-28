@@ -11,7 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.digitusforum.user.UserEntity;
 import com.digitusforum.user.UserRepository;
-import com.digitusforum.user.UserService;
+import com.digitusforum.user.UserType;
 import com.digitusforum.user.util.M;
 import com.digitusforum.user.util.Util;
 
@@ -29,25 +29,26 @@ public class EmailVerificationService {
 		if (StringUtils.isBlank(emailVerificationVO.getEmail()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_MISSING_EMAIL);
 
-		Optional<UserEntity> userFromDB = userRepository.findByEmailAndDeletedIsFalse(emailVerificationVO.getEmail());
-		if (userFromDB.isPresent())
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_EMAIL_ALREADY_IN_USE);
+		// REGRA-EV-1: mesmo fluxo para email novo e existente. Não lançar USER_EMAIL_ALREADY_IN_USE.
 
 		EmailVerificationEntity emailVerificationFromDB = emailVerificationRepository
 				.findByEmail(emailVerificationVO.getEmail());
 		if (emailVerificationFromDB == null) {
-			EmailVerificationEntity emailVerification = new EmailVerificationEntity(emailVerificationVO.getEmail(),
+			emailVerificationFromDB = new EmailVerificationEntity(emailVerificationVO.getEmail(),
 					emailVerificationRepository);
-			emailVerificationRepository.save(emailVerification);
-			EmailVerificationSender.sendValidationEmailAsinc(emailVerification.getEmail(), emailVerification.getReadableNumber());
-		} else {
-			if (pastOneMinute(emailVerificationFromDB.getLastEmailSent())) {
-				EmailVerificationSender.sendValidationEmailAsinc(emailVerificationFromDB.getEmail(),
-						emailVerificationFromDB.getReadableNumber());
-				emailVerificationFromDB.setLastEmailSent(ZonedDateTime.now());
-				emailVerificationRepository.save(emailVerificationFromDB);
-			}
+			emailVerificationRepository.save(emailVerificationFromDB);
+			// REGRA-EMAIL-MOCK: não chama SES. Devolve readableNumber no JSON.
+			// EmailVerificationSender.sendValidationEmailAsinc(emailVerificationFromDB.getEmail(), emailVerificationFromDB.getReadableNumber());
+		} else if (codeExpired(emailVerificationFromDB)) {
+			emailVerificationFromDB.refreshReadableNumber(emailVerificationRepository);
+			emailVerificationRepository.save(emailVerificationFromDB);
+			// EmailVerificationSender.sendValidationEmailAsinc(...)
+		} else if (pastOneMinute(emailVerificationFromDB.getLastEmailSent())) {
+			emailVerificationFromDB.setLastEmailSent(ZonedDateTime.now());
+			emailVerificationRepository.save(emailVerificationFromDB);
+			// EmailVerificationSender.sendValidationEmailAsinc(...)
 		}
+		emailVerificationVO.setReadableNumber(emailVerificationFromDB.getReadableNumber());
 		emailVerificationVO.setResponse(M.EMAIL_SENT);
 		return emailVerificationVO;
 	}
@@ -56,24 +57,21 @@ public class EmailVerificationService {
 		return ZonedDateTime.now().isAfter(createdIn.plusMinutes(1));
 	}
 
+	private boolean codeExpired(EmailVerificationEntity emailVerificationFromDB) {
+		return emailVerificationFromDB.getLastEmailSent() == null
+				|| ZonedDateTime.now().isAfter(emailVerificationFromDB.getLastEmailSent().plusMinutes(15));
+	}
+
 	private void assertCodeStillValid(EmailVerificationEntity emailVerificationFromDB) {
-		if (emailVerificationFromDB.getLastEmailSent() == null
-				|| ZonedDateTime.now().isAfter(emailVerificationFromDB.getLastEmailSent().plusMinutes(15)))
+		if (codeExpired(emailVerificationFromDB))
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.VALIDATION_NUMBER_NOT_FOUND);
 	}
 
 	public EmailVerificationVO validateEmail(EmailVerificationVO emailVerificationVO) {
 		if (StringUtils.isBlank(emailVerificationVO.getEmail()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_MISSING_EMAIL);
-		
-		if (StringUtils.isBlank(emailVerificationVO.getPassword()))
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_MISSING_PASSWORD);
-		
-		if (StringUtils.isBlank(emailVerificationVO.getRetypePassword()))
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_MISSING_PASSWORD);
-		
-		if(!emailVerificationVO.getPassword().equals(emailVerificationVO.getRetypePassword()))
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.DIFERENT_PASSWORD);
+
+		// NÃO-PASSWORD / CONTRATO-EV-OK: sem password / retypePassword.
 
 		if (emailVerificationVO.getReadableNumber() == null || emailVerificationVO.getReadableNumber() == 0)
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_MISSING_READABLE_NUMBER);
@@ -87,14 +85,24 @@ public class EmailVerificationService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.VALIDATION_NUMBER_NOT_FOUND);
 
 		assertCodeStillValid(emailVerificationFromDB);
-		
-		UserEntity user = new UserEntity();
-		user.setEmail(emailVerificationVO.getEmail());
-		user.setPassword(Util.encrypt(emailVerificationVO.getPassword()));
-		userRepository.save(user);
-		
+
+		Optional<UserEntity> existing = userRepository.findByEmailAndDeletedIsFalse(emailVerificationVO.getEmail());
+		UserEntity user;
+		if (existing.isPresent()) {
+			user = existing.get();
+		} else {
+			user = new UserEntity();
+			user.setEmail(emailVerificationVO.getEmail());
+			user.setName(null);
+			user.setType(UserType.CLIENT);
+			user = userRepository.save(user);
+		}
+
 		emailVerificationRepository.deleteById(emailVerificationFromDB.getEmailVerificationId());
-		
+
+		emailVerificationVO.setUserId(user.getId());
+		emailVerificationVO.setPassword(null);
+		emailVerificationVO.setRetypePassword(null);
 		emailVerificationVO.setResponse(M.EMAIL_VALIDATED);
 		return emailVerificationVO;
 	}
