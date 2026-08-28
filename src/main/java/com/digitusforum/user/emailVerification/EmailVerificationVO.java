@@ -9,6 +9,7 @@ public class EmailVerificationVO {
 	private String response;
 	private Integer readableNumber;
 	private Boolean used;
+	private String userId;
 
 	public EmailVerificationVO() {
 	}
@@ -75,5 +76,13 @@ public class EmailVerificationVO {
 
 	public void setRecaptchaToken(String recaptchaToken) {
 		this.recaptchaToken = recaptchaToken;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 }

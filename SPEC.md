@@ -57,8 +57,8 @@ Não salva: recaptcha, token (firewall), perfil, HTML de guru. **Salva** matríc
 ## CONTRATO
 User: `/user/v1/create` (**stub, não salva**) · `/{id}/retrieve` · `/{id}/update` (nome etc.) · `/{id}/delete`
 **Revogados como produto:** `/create/validateEmail` (nome mentiroso, era login email+senha) · `/retrieve/byEmailAndPassword`
-Email: CONTRATO-EV-SEND `/emailVerification/v1/sendValidationEmail` body `{email}` → persiste código; **mock:** response inclui `readableNumber`
-CONTRATO-EV-OK `/emailVerification/v1/validateEmail` body `{email, readableNumber}` **sem senha** → se email novo, cria User (`name` null); se existe, não duplica. Borda emite token depois.
+Email: CONTRATO-EV-SEND `/emailVerification/v1/sendValidationEmail` body `{email}` → persiste código; **mock:** response inclui `readableNumber`. código alinhado (novo e existente; sem SES).
+CONTRATO-EV-OK `/emailVerification/v1/validateEmail` body `{email, readableNumber}` **sem senha** → se email novo, cria User (`name` null, `type` client); se existe, não duplica. Borda emite token depois. código alinhado.
 **Revogados:** `sendResetPasswordEmail` · `resetPassword`
 Chat: `/user/v1/chat` · `conversations` · `conversation` · `sup` (interno; borda `/firewall/sup` **não** existe)
 Health: `/user/v1/healthCheck`
