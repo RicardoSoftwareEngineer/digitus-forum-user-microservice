@@ -1,7 +1,7 @@
 <!-- para IA. não é README de humano. -->
 # SPEC — user
 
-status: v0.3
+status: v0.5
 sha: `53dcbe4`
 data: 2026-08-28
 
@@ -30,6 +30,8 @@ MS **interno** (porta `8083`). CRUD de User, verificação de email, chat. Sem a
 - REGRA-DEL-1: delete é soft (`deleted=true`) salvo spec futura.
 - REGRA-CHAT-1: conversa pertence a `userId`. Mensagens salvam texto + metadados.
 - REGRA-GURU-USER: aluno é **global**. Um `userId` estuda com vários gurus. User **não** tem `guruId`.
+- REGRA-PAY-1: acesso a training pago = DADOS-COMPRA daquele trainingId **ou** DADOS-ASSINATURA active do guru daquele training. MVP1: assinatura só `java`.
+- REGRA-PAY-2: PIX não cria DADOS-ASSINATURA. Só DADOS-COMPRA (avulso).
 
 ## NÃO
 - NÃO-EXPOSE: não é API pública. Quem chama da internet é o firewall.
@@ -47,8 +49,10 @@ MS **interno** (porta `8083`). CRUD de User, verificação de email, chat. Sem a
 | DADOS-EV | EmailVerification | emailVerificationId, email, readableNumber, lastEmailSent |
 | DADOS-SUBJ | ChatSubject | chatSubjectId, userId, name, privateOrPublic, status, lastUpdated, deleted |
 | DADOS-MSG | ChatMessage | chatMessageId, chatSubjectId, userId, userName, userEmail, userType, message, status, position. `alignment` é calculado na leitura, **não** persiste. |
+| DADOS-ASSINATURA | Subscription | id, userId, scope=`guru`, guruId, stripeCustomerId, stripeSubscriptionId, status, deleted. MVP1: guruId=`java`. |
+| DADOS-COMPRA | Purchase | id, userId, trainingId, stripeCheckoutSessionId, stripePaymentIntentId, status, createdIn |
 
-Não salva ainda: recaptcha, token (token é do firewall), perfil, curso, matrícula, guruId. Ver GAP-COMPRA (course). Aluno global: sem guru neste MS.
+Não salva: recaptcha, token (firewall), perfil, HTML de guru. **Salva** matrícula: DADOS-COMPRA (avulso por training) e DADOS-ASSINATURA (mensalidade guru). Aluno global: sem guruId no User.
 
 ## CONTRATO
 User: `/user/v1/create` (**stub, não salva**) · `/{id}/retrieve` · `/{id}/update` (nome etc.) · `/{id}/delete`
@@ -59,6 +63,7 @@ CONTRATO-EV-OK `/emailVerification/v1/validateEmail` body `{email, readableNumbe
 Chat: `/user/v1/chat` · `conversations` · `conversation` · `sup` (interno; borda `/firewall/sup` **não** existe)
 Health: `/user/v1/healthCheck`
 
+Billing interno (borda chama): gravar/ler DADOS-ASSINATURA e DADOS-COMPRA; listar por userId. Sem Stripe neste MS (firewall fala com Stripe).
 `/user/v1/retrieve` (lista) está comentado — **não** está na spec.
 
 ## GAP
