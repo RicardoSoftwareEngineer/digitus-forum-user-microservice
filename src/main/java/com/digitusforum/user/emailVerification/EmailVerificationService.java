@@ -56,6 +56,12 @@ public class EmailVerificationService {
 		return ZonedDateTime.now().isAfter(createdIn.plusMinutes(1));
 	}
 
+	private void assertCodeStillValid(EmailVerificationEntity emailVerificationFromDB) {
+		if (emailVerificationFromDB.getLastEmailSent() == null
+				|| ZonedDateTime.now().isAfter(emailVerificationFromDB.getLastEmailSent().plusMinutes(15)))
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.VALIDATION_NUMBER_NOT_FOUND);
+	}
+
 	public EmailVerificationVO validateEmail(EmailVerificationVO emailVerificationVO) {
 		if (StringUtils.isBlank(emailVerificationVO.getEmail()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_MISSING_EMAIL);
@@ -79,6 +85,8 @@ public class EmailVerificationService {
 		
 		if(!emailVerificationVO.getReadableNumber().equals(emailVerificationFromDB.getReadableNumber()))
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.VALIDATION_NUMBER_NOT_FOUND);
+
+		assertCodeStillValid(emailVerificationFromDB);
 		
 		UserEntity user = new UserEntity();
 		user.setEmail(emailVerificationVO.getEmail());
@@ -124,6 +132,8 @@ public class EmailVerificationService {
 		
 		if(!emailVerificationVO.getReadableNumber().equals(emailVerificationFromDB.getReadableNumber()))
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.VALIDATION_NUMBER_NOT_FOUND);
+
+		assertCodeStillValid(emailVerificationFromDB);
 		
 		UserEntity user = userRepository.findByEmailAndDeletedIsFalse(emailVerificationVO.getEmail())
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, M.USER_NOT_FOUND));

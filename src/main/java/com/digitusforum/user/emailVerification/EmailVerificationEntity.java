@@ -31,9 +31,9 @@ public class EmailVerificationEntity {
 	}
 
 	private int generateReadableNumber(String userId, EmailVerificationRepository emailVerificationRepository) {
-		int readableNumber = ThreadLocalRandom.current().nextInt(1000, 9999);
+		int readableNumber = ThreadLocalRandom.current().nextInt(100000, 999999);
 		while (emailVerificationRepository.findByReadableNumber(readableNumber).isPresent())
-			readableNumber = ThreadLocalRandom.current().nextInt(1000, 9999);
+			readableNumber = ThreadLocalRandom.current().nextInt(100000, 999999);
 		return readableNumber;
 	}
 
