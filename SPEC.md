@@ -1,8 +1,8 @@
 <!-- para IA. não é README de humano. -->
 # SPEC — user
 
-status: v0.5
-sha: `53dcbe4`
+status: v0.6
+sha: `78280cd`
 data: 2026-08-28
 
 ## Como usar
@@ -32,6 +32,7 @@ MS **interno** (porta `8083`). CRUD de User, verificação de email, chat. Sem a
 - REGRA-GURU-USER: aluno é **global**. Um `userId` estuda com vários gurus. User **não** tem `guruId`.
 - REGRA-PAY-1: acesso a training pago = DADOS-COMPRA daquele trainingId **ou** DADOS-ASSINATURA active do guru daquele training. MVP1: assinatura só `java`.
 - REGRA-PAY-2: PIX não cria DADOS-ASSINATURA. Só DADOS-COMPRA (avulso).
+- REGRA-PAY-DB: leitura de acesso = DADOS-COMPRA (e assinatura), não Stripe. Stripe só na compra + confirmação prévia.
 
 ## NÃO
 - NÃO-EXPOSE: não é API pública. Quem chama da internet é o firewall.
@@ -64,6 +65,7 @@ Chat: `/user/v1/chat` · `conversations` · `conversation` · `sup` (interno; bo
 Health: `/user/v1/healthCheck`
 
 Billing interno (borda chama): gravar/ler DADOS-ASSINATURA e DADOS-COMPRA; listar por userId. Sem Stripe neste MS (firewall fala com Stripe).
+Interno: `POST /user/v1/purchase/retrieveByUserId` · `hasPurchase` · `upsertPaid`. `POST /user/v1/subscription/retrieveByUserId` · `hasActive` · `upsert`. Sem auth HTTP (NÃO-EXPOSE).
 `/user/v1/retrieve` (lista) está comentado — **não** está na spec.
 
 ## GAP
