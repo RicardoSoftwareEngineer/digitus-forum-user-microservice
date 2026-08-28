@@ -17,7 +17,8 @@ data: 2026-08-28
 MS **interno** (porta `8083`). CRUD de User, verificação de email, reset de senha, chat. Sem auth HTTP (interno). Dono dos dados de pessoa.
 
 ## INV
-- INV-USER-1: user persistido tem `id` (UUID), `name`, `email`, `password` (cifrada), `type` (default CLIENT), `deleted`.
+- INV-USER-1: user persistido tem `id` (UUID), `name`, `email`, `password` (cifrada), `type` (default `client`), `deleted`.
+- INV-USER-4: signup real = `validateEmail`. HTTP `/user/v1/create` é **stub** (não persiste). No signup, `name` nasce null; `type` = `client`.
 - INV-USER-2: email único entre não-deletados.
 - INV-USER-3: senha **não** é texto puro. Mecanismo atual = `Encryptors.text` reversível (observado). Spec de produto: senha não volta em JSON de API pública (borda). Interno ainda devolve entidade — GAP-PWD-JSON.
 - INV-EV-1: cadastro público passa por email verification: envia código → valida código+senha → **cria** User.
@@ -36,13 +37,13 @@ MS **interno** (porta `8083`). CRUD de User, verificação de email, reset de se
 |---|---|---|
 | DADOS-USER | User | id, name, email, password, type, deleted |
 | DADOS-EV | EmailVerification | emailVerificationId, email, readableNumber, lastEmailSent |
-| DADOS-SUBJ | ChatSubject | chatSubjectId, userId, name, lastUpdated, deleted |
-| DADOS-MSG | ChatMessage | chatMessageId, chatSubjectId, userId, userName, userEmail, userType, message, status, alignment, position |
+| DADOS-SUBJ | ChatSubject | chatSubjectId, userId, name, privateOrPublic, status, lastUpdated, deleted |
+| DADOS-MSG | ChatMessage | chatMessageId, chatSubjectId, userId, userName, userEmail, userType, message, status, position. `alignment` é calculado na leitura, **não** persiste. |
 
 Não salva: recaptcha, token, perfil, curso.
 
 ## END
-User: `/user/v1/create` · `/{id}/retrieve` · `/create/validateEmail` · `/retrieve/byEmailAndPassword` · `/{id}/update` · `/{id}/delete`
+User: `/user/v1/create` (**stub, não salva**) · `/{id}/retrieve` · `/create/validateEmail` (**nome mentiroso: é login email+senha, não cria user**) · `/retrieve/byEmailAndPassword` · `/{id}/update` · `/{id}/delete`
 Email: `/emailVerification/v1/sendValidationEmail` · `validateEmail` · `sendResetPasswordEmail` · `resetPassword`
 Chat: `/user/v1/chat` · `conversations` · `conversation` · `sup` (interno; borda `/firewall/sup` **não** existe)
 Health: `/user/v1/healthCheck`
