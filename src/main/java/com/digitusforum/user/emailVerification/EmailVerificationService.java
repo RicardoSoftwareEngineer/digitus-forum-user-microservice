@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.digitusforum.user.UserEntity;
@@ -67,6 +68,7 @@ public class EmailVerificationService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.VALIDATION_NUMBER_NOT_FOUND);
 	}
 
+	@Transactional
 	public EmailVerificationVO validateEmail(EmailVerificationVO emailVerificationVO) {
 		if (StringUtils.isBlank(emailVerificationVO.getEmail()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_MISSING_EMAIL);
@@ -95,10 +97,13 @@ public class EmailVerificationService {
 			user.setEmail(emailVerificationVO.getEmail());
 			user.setName(null);
 			user.setType(UserType.CLIENT);
+			user.setBackgroundAuto(Boolean.TRUE);
+			user.setPinnedBackgroundId(null);
 			user = userRepository.save(user);
 		}
 
-		emailVerificationRepository.deleteById(emailVerificationFromDB.getEmailVerificationId());
+		// Idempotent: concurrent Enviar código must not 500 with StaleStateException.
+		emailVerificationRepository.deleteOneById(emailVerificationFromDB.getEmailVerificationId());
 
 		emailVerificationVO.setUserId(user.getId());
 		emailVerificationVO.setPassword(null);
@@ -123,6 +128,7 @@ public class EmailVerificationService {
 		return emailVerificationVO;
 	}
 	
+	@Transactional
 	public EmailVerificationVO resetPassword(EmailVerificationVO emailVerificationVO) {
 		if (StringUtils.isBlank(emailVerificationVO.getEmail()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_MISSING_EMAIL);
@@ -148,7 +154,7 @@ public class EmailVerificationService {
 		
 		user.setPassword(Util.encrypt(emailVerificationVO.getPassword()));
 		userRepository.save(user);
-		emailVerificationRepository.deleteById(emailVerificationFromDB.getEmailVerificationId());
+		emailVerificationRepository.deleteOneById(emailVerificationFromDB.getEmailVerificationId());
 		emailVerificationVO.setResponse(M.PASSWORD_RESETED);
 		
 		
