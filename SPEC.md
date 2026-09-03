@@ -1,9 +1,9 @@
 <!-- para IA. não é README de humano. -->
 # SPEC — user
 
-status: v0.7
+status: v0.8
 sha: `pending`
-data: 2026-09-02
+data: 2026-09-03
 
 ## Como usar
 - Este arquivo é a fonte. Código ≠ spec → **bug de código**. Spec errada → Ricardo muda **este** arquivo, depois o código.
@@ -17,7 +17,8 @@ data: 2026-09-02
 MS **interno** (porta `8083`). CRUD de User, verificação de email, chat. Sem auth HTTP (interno). Dono dos dados de pessoa. **Não** é dono de senha (produto sem senha).
 
 ## REGRA
-- REGRA-USER-1: user persistido tem `id` (UUID), `name`, `age` (Integer, nullable), `email`, `type` (default `client`), `deleted`. Coluna `password` é **legado**: não preencher no cadastro/login, não usar para autenticar.
+- REGRA-USER-1: user persistido tem `id` (UUID), `name`, `age` (Integer, nullable), `email`, `type` (default `client`), `deleted`, `backgroundAuto` (Boolean, default true), `pinnedBackgroundId` (nullable). Coluna `password` é **legado**: não preencher no cadastro/login, não usar para autenticar.
+- REGRA-BACKGROUND-1: DADOS-BACKGROUND-SAVE só o dono (`userId` do body). Select/setAuto/prefs/list/save exigem o mesmo userId.
 - REGRA-USER-4: HTTP `/user/v1/create` é **stub** (não persiste). Signup real = CONTRATO-EV-OK. No cadastro, `name` nasce null; `type` = `client`.
 - REGRA-USER-5: cadastro **não** pede nome nem idade. Nome/idade o usuário preenche depois em **Meus dados** (centro do cinema na vitrine; CONTRATO update sem senha).
 - REGRA-USER-2: email único entre não-deletados.
@@ -46,7 +47,7 @@ MS **interno** (porta `8083`). CRUD de User, verificação de email, chat. Sem a
 ## DADOS
 | id | tabela | campos |
 |---|---|---|
-| DADOS-USER | User | id, name, age (Integer, nullable), email, type, deleted. `password` coluna legado, não usar. |
+| DADOS-USER | User | id, name, age (Integer, nullable), email, type, deleted, backgroundAuto (default true), pinnedBackgroundId (nullable). `password` coluna legado, não usar. |
 | DADOS-EV | EmailVerification | emailVerificationId, email, readableNumber, lastEmailSent |
 | DADOS-SUBJ | ChatSubject | chatSubjectId, userId, name, privateOrPublic, status, lastUpdated, deleted |
 | DADOS-MSG | ChatMessage | chatMessageId, chatSubjectId, userId, userName, userEmail, userType, message, status, position. `alignment` é calculado na leitura, **não** persiste. |
@@ -68,6 +69,15 @@ Health: `/user/v1/healthCheck`
 Billing interno (borda chama): gravar/ler DADOS-ASSINATURA e DADOS-COMPRA; listar por userId. Sem Stripe neste MS (firewall fala com Stripe).
 Interno: `POST /user/v1/purchase/retrieveByUserId` · `hasPurchase` · `upsertPaid`. `POST /user/v1/subscription/retrieveByUserId` · `hasActive` · `upsert`. Sem auth HTTP (NÃO-EXPOSE).
 `/user/v1/retrieve` (lista) está comentado — **não** está na spec.
+
+Background (borda chama; sem auth HTTP):
+- CONTRATO-BG-SAVE `POST /user/v1/background/save` `{userId, name, wallpaperData, dominantColor}` → DADOS-BACKGROUND-SAVE
+- CONTRATO-BG-LIST `POST /user/v1/background/retrieveByUserId` `{userId}` → lista não-deletados
+- CONTRATO-BG-SELECT `POST /user/v1/background/select` `{userId, backgroundId}` → `backgroundAuto=false`, `pinnedBackgroundId=id`; devolve save + prefs
+- CONTRATO-BG-AUTO `POST /user/v1/background/setAuto` `{userId}` → `backgroundAuto=true`, `pinnedBackgroundId=null`
+- CONTRATO-BG-PREFS `POST /user/v1/background/prefs` `{userId}` → `{backgroundAuto, pinnedBackgroundId, wallpaperData?}` (wallpaper se pin ativo)
+Auto vs pin: auto=true → vitrine gera/avança Trianglify; auto=false → reaplica wallpaper pinado (sem gerar próximo).
+
 
 ## GAP
 - GAP-CODE: **revogado** (2026-08-28). REGRA-EV-3 (6 dígitos, 15 min).

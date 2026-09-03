@@ -20,6 +20,8 @@ public class UserEntity {
 	private String password;
 	private String type = UserType.CLIENT;
 	private boolean deleted;
+	private Boolean backgroundAuto = Boolean.TRUE;
+	private String pinnedBackgroundId;
 
 	public UserEntity() {
 	}
@@ -87,6 +89,23 @@ public class UserEntity {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+
+	public Boolean getBackgroundAuto() {
+		return backgroundAuto;
+	}
+
+	public void setBackgroundAuto(Boolean backgroundAuto) {
+		this.backgroundAuto = backgroundAuto;
+	}
+
+	public String getPinnedBackgroundId() {
+		return pinnedBackgroundId;
+	}
+
+	public void setPinnedBackgroundId(String pinnedBackgroundId) {
+		this.pinnedBackgroundId = pinnedBackgroundId;
 	}
 
 }
