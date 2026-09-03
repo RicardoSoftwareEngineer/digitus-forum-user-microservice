@@ -15,6 +15,7 @@ public class UserEntity {
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
 	private String id;
 	private String name;
+	private Integer age;
 	private String email;
 	private String password;
 	private String type = UserType.CLIENT;
@@ -25,7 +26,8 @@ public class UserEntity {
 
 	public UserEntity(UserVO user) {
 		this.id = user.getId();
-		this.name = user.getUserName();
+		this.name = user.getName() != null ? user.getName() : user.getUserName();
+		this.age = user.getAge();
 		this.email = user.getEmail();
 		this.password = user.getPassword();
 		this.deleted = user.isDeleted();
@@ -53,6 +55,14 @@ public class UserEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
 	}
 
 	public String getEmail() {
