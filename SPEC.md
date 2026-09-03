@@ -1,9 +1,9 @@
 <!-- para IA. não é README de humano. -->
 # SPEC — user
 
-status: v0.6
-sha: `78280cd`
-data: 2026-08-28
+status: v0.7
+sha: `pending`
+data: 2026-09-02
 
 ## Como usar
 - Este arquivo é a fonte. Código ≠ spec → **bug de código**. Spec errada → Ricardo muda **este** arquivo, depois o código.
@@ -17,9 +17,9 @@ data: 2026-08-28
 MS **interno** (porta `8083`). CRUD de User, verificação de email, chat. Sem auth HTTP (interno). Dono dos dados de pessoa. **Não** é dono de senha (produto sem senha).
 
 ## REGRA
-- REGRA-USER-1: user persistido tem `id` (UUID), `name`, `email`, `type` (default `client`), `deleted`. Coluna `password` é **legado**: não preencher no cadastro/login, não usar para autenticar.
+- REGRA-USER-1: user persistido tem `id` (UUID), `name`, `age` (Integer, nullable), `email`, `type` (default `client`), `deleted`. Coluna `password` é **legado**: não preencher no cadastro/login, não usar para autenticar.
 - REGRA-USER-4: HTTP `/user/v1/create` é **stub** (não persiste). Signup real = CONTRATO-EV-OK. No cadastro, `name` nasce null; `type` = `client`.
-- REGRA-USER-5: cadastro **não** pede nome. Nome o usuário atualiza depois (update do próprio user / perfil).
+- REGRA-USER-5: cadastro **não** pede nome nem idade. Nome/idade o usuário preenche depois em **Meus dados** (centro do cinema na vitrine; CONTRATO update sem senha).
 - REGRA-USER-2: email único entre não-deletados.
 - REGRA-USER-3: **revogado** (2026-08-28). Produto sem senha. Encryptors no código = legado (GAP-PWD).
 - REGRA-AUTH-CODE-1: identidade = email + código de uso único. Sem senha no cadastro e no login.
@@ -46,7 +46,7 @@ MS **interno** (porta `8083`). CRUD de User, verificação de email, chat. Sem a
 ## DADOS
 | id | tabela | campos |
 |---|---|---|
-| DADOS-USER | User | id, name, email, type, deleted. `password` coluna legado, não usar. |
+| DADOS-USER | User | id, name, age (Integer, nullable), email, type, deleted. `password` coluna legado, não usar. |
 | DADOS-EV | EmailVerification | emailVerificationId, email, readableNumber, lastEmailSent |
 | DADOS-SUBJ | ChatSubject | chatSubjectId, userId, name, privateOrPublic, status, lastUpdated, deleted |
 | DADOS-MSG | ChatMessage | chatMessageId, chatSubjectId, userId, userName, userEmail, userType, message, status, position. `alignment` é calculado na leitura, **não** persiste. |
@@ -56,7 +56,8 @@ MS **interno** (porta `8083`). CRUD de User, verificação de email, chat. Sem a
 Não salva: recaptcha, token (firewall), perfil, HTML de guru. **Salva** matrícula: DADOS-COMPRA (avulso por training) e DADOS-ASSINATURA (mensalidade guru). Aluno global: sem guruId no User.
 
 ## CONTRATO
-User: `/user/v1/create` (**stub, não salva**) · `/{id}/retrieve` · `/{id}/update` (nome etc.) · `/{id}/delete`
+User: `/user/v1/create` (**stub, não salva**) · `/{id}/retrieve` (VO com `name`+`age`, sem senha) · `/{id}/update` · `/{id}/delete`
+CONTRATO-USER-UPDATE `/{id}/update` body `{ name?, age?, email? }` **sem senha** (REGRA / NÃO-PASSWORD). Patch dos campos enviados; coluna `password` legado intocada. Aceita JSON `name` (alias de `userName` histórico no VO). Meus dados UI = centro do cinema (não sidebar).
 **Revogados como produto:** `/create/validateEmail` (nome mentiroso, era login email+senha) · `/retrieve/byEmailAndPassword`
 Email: CONTRATO-EV-SEND `/emailVerification/v1/sendValidationEmail` body `{email}` → persiste código; **mock:** response inclui `readableNumber`. código alinhado (novo e existente; sem SES).
 CONTRATO-EV-OK `/emailVerification/v1/validateEmail` body `{email, readableNumber}` **sem senha** → se email novo, cria User (`name` null, `type` client); se existe, não duplica. Borda emite token depois. código alinhado.

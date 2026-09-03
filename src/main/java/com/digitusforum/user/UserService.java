@@ -41,11 +41,23 @@ public class UserService {
 		return userRepository.findByDeletedIsFalse();
 	}
 
-	public UserEntity retrieveById(String id) {
+	public UserVO retrieveById(String id) {
 		Optional<UserEntity> user = userRepository.findById(id);
 		if (user.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.USER_NOT_FOUND);
-		return user.get();
+		return toPublicVO(user.get());
+	}
+
+	private UserVO toPublicVO(UserEntity entity) {
+		UserVO vo = new UserVO();
+		vo.setId(entity.getId());
+		vo.setName(entity.getName());
+		vo.setAge(entity.getAge());
+		vo.setEmail(entity.getEmail());
+		vo.setType(entity.getType());
+		vo.setUserType(entity.getType());
+		vo.setDeleted(entity.isDeleted());
+		return vo;
 	}
 
 	public UserVO retrieveByEmailAndPassword(UserVO userVO) {
@@ -72,22 +84,29 @@ public class UserService {
 	}
 
 	public UserVO update(UserVO user, String id) {
-		if (StringUtils.isBlank(user.getEmail()))
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.LOGIN_MISSING_EMAIL);
-		if (StringUtils.isBlank(user.getPassword()))
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.LOGIN_MISSING_PASSWORD);
-
-		Optional<UserEntity> userFromDB = userRepository.findById(id);
-		if (userFromDB.isEmpty())
+		Optional<UserEntity> found = userRepository.findById(id);
+		if (found.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, M.USER_NOT_FOUND);
 
-		userFromDB = userRepository.findByEmailAndIdNotAndDeletedIsFalse(user.getEmail(), id);
-		if (userFromDB.isPresent())
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_EMAIL_ALREADY_IN_USE);
+		UserEntity entity = found.get();
 
-		user.setId(id);
-		userRepository.save(new UserEntity(user));
-		return user;
+		if (StringUtils.isNotBlank(user.getEmail())) {
+			Optional<UserEntity> emailTaken = userRepository.findByEmailAndIdNotAndDeletedIsFalse(user.getEmail(), id);
+			if (emailTaken.isPresent())
+				throw new ResponseStatusException(HttpStatus.FORBIDDEN, M.USER_EMAIL_ALREADY_IN_USE);
+			entity.setEmail(user.getEmail());
+		}
+
+		String name = user.getName() != null ? user.getName() : user.getUserName();
+		if (name != null)
+			entity.setName(name);
+
+		if (user.getAge() != null)
+			entity.setAge(user.getAge());
+
+		// NÃO-PASSWORD: never null-out or overwrite password column (legado).
+		userRepository.save(entity);
+		return toPublicVO(entity);
 	}
 
 	public UserEntity delete(String id) {

@@ -3,6 +3,7 @@ package com.digitusforum.user;
 public class UserVO {
 	private String id;
 	private String userName;
+	private Integer age;
 	private String userType;
 	private String email;
 	private String password;
@@ -45,6 +46,23 @@ public class UserVO {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	/** JSON alias: firewall/front send `name`. */
+	public String getName() {
+		return userName;
+	}
+
+	public void setName(String name) {
+		this.userName = name;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
 	}
 
 	public String getEmail() {
